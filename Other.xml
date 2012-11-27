@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<chapter version="5.0" xml:id="other" xmlns="http://docbook.org/ns/docbook" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Other</title>
+    <?dbhtml stop-chunking?>
+<section xml:id="other-contributing-to-the-documentation">
+        <title>Contributing to the Documentation</title>
+        <para>Documentation in Markdown format is hosted on Github at
+<link xlink:href="https://github.com/racker/service-registry-docs">https://github.com/racker/service-registry-docs</link>.
+
+</para>
+        <para>You can contribute to it by forking the repository, creating a branch with your
+changes and opening a pull request.
+</para>
+    </section>
+</chapter>

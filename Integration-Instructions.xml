@@ -1,0 +1,557 @@
+<?xml version='1.0' encoding='utf-8'?>
+<chapter version="5.0" xml:id="integration-instructions" xmlns="http://docbook.org/ns/docbook" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Integration Instructions</title>
+    <para>This document will explain how to integrate Rackspace Service Registry clients,
+into your applications and also contains an example on how to integrate
+the Twisted Python client into your Twisted-powered application.
+
+</para>
+    <?dbhtml stop-chunking?>
+<section xml:id="integration-instructions-general-flow">
+        <title>General Flow</title>
+        <para>The general flow when registering a service with Rackspace Service Registry is:
+
+</para>
+        <itemizedlist>
+            <listitem>
+                <para>Create a session.</para>
+            </listitem>
+            <listitem>
+                <para>Add service(s) to the session.</para>
+            </listitem>
+            <listitem>
+                <para>Heartbeat the session to maintain it.</para>
+            </listitem>
+        </itemizedlist>
+        <para>Once you've done those things, you'll have a session in Rackspace Service
+Registry with a service attached to it, and you will be able to utilize
+features such as the Events feed, which contains events for when a service
+has joined, when a session has timed out, and more.
+
+</para>
+        <section xml:id="general-flow-create-a-session">
+            <title>Create a Session</title>
+            <para>The first thing you will want to do when using the Rackspace Service Registry
+is create a session.
+
+</para>
+            <para>As described in the Session section of the <link linkend="concepts">Concepts</link> chapter,
+sessions give clients the ability to manage persistent context for one or more
+services. Clients should first create a session and heartbeat it to maintain
+it.
+
+</para>
+            <para>To create a session, POST to /sessions, replacing "1234" with your account
+ID number, and using the auth token returned by the auth API. The request
+body must contain <emphasis>heartbeat_timeout</emphasis> in the range of 3-30 seconds, and may
+contain optional metadata (key/value pairs).
+
+</para>
+            <programlisting language="shell">POST /v1.0/1234/sessions HTTP/1.1
+Host: dfw.registry.api.rackspacecloud.com
+Accept: application/json
+X-Auth-Token: eaaafd18-0fed-4b3a-81b4-663c99ec1cbb</programlisting>
+            <example>
+                <title>Create Session Request Body</title>
+                <programlisting language="javascript">{
+    "metadata": {
+        "region": "dfw"
+    },
+    "heartbeat_timeout": 30
+}</programlisting>
+            </example>
+            <para>The location header of the response should look something like this:
+
+</para>
+            <para>https://dfw.registry.api.rackspacecloud.com/v1.0/1234/sessions/seMkzI0mxC
+
+</para>
+            <para>The last part of the location header, seMkzI0mxC, is the session ID.
+
+</para>
+            <example>
+                <title>Create Session Response</title>
+                <programlisting language="javascript">{
+    "token": "6bc8d050-f86a-11e1-a89e-ca2ffe480b20"
+}</programlisting>
+            </example>
+            <para>It contains the initial token which you can use to start heartbeating the
+session.
+
+</para>
+        </section>
+        <section xml:id="general-flow-add-services">
+            <title>Add Services</title>
+            <para>Next, you'll want to add services to the session. Service IDs are user
+provided, and must be unique across the whole account. Let's say our
+service name is 'dfw1-db1'. The way to create a service is to POST to
+/services with a body containing the service ID, the session ID that the
+service should belong to, optional metadata, and optional tags:
+
+</para>
+            <programlisting language="shell">POST /v1.0/1234/services HTTP/1.1
+Host: dfw.registry.api.rackspacecloud.com
+Accept: application/json
+X-Auth-Token: eaaafd18-0fed-4b3a-81b4-663c99ec1cbb</programlisting>
+            <example>
+                <title>Create Service Request Body</title>
+                <programlisting language="javascript">{
+    "tags": [
+        "database",
+        "mysql"
+    ],
+    "metadata": {
+        "region": "dfw",
+        "port": "3306",
+        "ip": "127.0.0.1",
+        "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
+    },
+    "id": "dfw1-db1",
+    "session_id": "sessionId"
+}</programlisting>
+            </example>
+            <para>Let's say you also added a service called 'dfw1-api' without any tags
+or metadata. If you GET /services, you should see this:
+
+</para>
+            <example>
+                <title>GET /services Response</title>
+                <programlisting language="javascript">{
+    "values": [
+        {
+            "id": "dfw1-api",
+            "session_id": "sessionId",
+            "tags": [],
+            "metadata": {}
+        },
+        {
+            "id": "dfw1-db1",
+            "session_id": "sessionId",
+            "tags": [
+                "database",
+                "mysql"
+            ],
+            "metadata": {
+                "region": "dfw",
+                "port": "3306",
+                "ip": "127.0.0.1",
+                "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
+            }
+        }
+    ],
+    "metadata": {
+        "count": 2,
+        "limit": 100,
+        "marker": null,
+        "next_marker": null,
+        "next_href": null
+    }
+}</programlisting>
+            </example>
+            <para>You can also GET services by tag:
+
+</para>
+            <programlisting language="shell">GET /v1.0/1234/services?tag=database HTTP/1.1
+Host: dfw.registry.api.rackspacecloud.com
+Accept: application/json
+X-Auth-Token: eaaafd18-0fed-4b3a-81b4-663c99ec1cbb</programlisting>
+            <para>and the response would look like this:
+
+</para>
+            <example>
+                <title>Get Services By Tag Response</title>
+                <programlisting language="javascript">{
+    "values": [
+        {
+            "id": "dfw1-db1",
+            "session_id": "sessionId",
+            "tags": [
+                "database",
+                "mysql"
+            ],
+            "metadata": {
+                "region": "dfw",
+                "port": "3306",
+                "ip": "127.0.0.1",
+                "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
+            }
+        }
+    ],
+    "metadata": {
+        "count": 1,
+        "limit": 100,
+        "marker": null,
+        "next_marker": null,
+        "next_href": null
+    }
+}</programlisting>
+            </example>
+            <para>To change the dfw1-db1 service (for example, update its metadata),
+you can do an HTTP PUT request to /services/dfw1-db1 with a body that
+contains the new metadata that you'd like the service to have.
+
+</para>
+        </section>
+        <section xml:id="general-flow-heartbeat-the-session">
+            <title>Heartbeat the Session</title>
+            <para>Heartbeating is as simple as POSTing to /sessions/[session ID]/heartbeat
+with the token as the body.
+
+</para>
+            <programlisting language="shell">POST /v1.0/1234/sessions/seMkzI0mxC/heartbeat HTTP/1.1
+Host: dfw.registry.api.rackspacecloud.com
+Accept: application/json
+X-Auth-Token: eaaafd18-0fed-4b3a-81b4-663c99ec1cbb</programlisting>
+            <para>The request body would look like this:
+
+</para>
+            <example>
+                <title>Heartbeat Sesssion Request Body</title>
+                <programlisting language="javascript">{
+    "token": "6bc8d050-f86a-11e1-a89e-ca2ffe480b20"
+}</programlisting>
+            </example>
+            <para>And the response body would look the same, except that the token would be
+different. You could then use the new token to heartbeat once again.
+
+</para>
+            <para>There are client libraries that abstract away heartbeating so that when you
+create a session, you get an object back that heartbeats for you
+automatically. We will see that in the Twisted Python client in the next
+section.
+
+</para>
+        </section>
+    </section>
+    <section xml:id="integration-instructions-using-the-twisted-python-client">
+        <title>Using the Twisted Python Client</title>
+        <para>All of the Service Registry functionality has been abstracted away in various
+clients for popular programming languages such as Java, Node.js, and Python. In
+this section, we'll see how to use the Twisted Python client to go through
+the same flow of creating a session, adding services to it, and
+heartbeating the session.
+
+</para>
+        <section xml:id="using-the-twisted-python-client-installing-the-client">
+            <title>Installing the Client</title>
+            <para>The client is available in the Python Package Index. To install, you can do:
+
+</para>
+            <programlisting language="shell">pip install txServiceRegistry</programlisting>
+        </section>
+        <section xml:id="using-the-twisted-python-client-create-a-session-(python)">
+            <title>Create a Session (Python)</title>
+            <para>In order to create a session using the Twisted Python client, we first have
+to instantiate a client to interact with the Rackspace Service Registry:
+
+</para>
+            <example>
+                <title>Instantiate the Client (Python)</title>
+                <programlisting language="python">from txServiceRegistry.client import Client
+from twisted.internet import reactor
+
+RACKSPACE_USERNAME = '' # your username here
+RACKSPACE_KEY = '' # your API key here
+SERVICE_REGISTRY_URL = 'https://dfw.registry.api.rackspace.com/v1.0/'
+
+client = Client(username=RACKSPACE_USERNAME,
+                apiKey=RACKSPACE_KEY,
+                baseUrl=SERVICE_REGISTRY_URL,
+                region='us')</programlisting>
+            </example>
+            <para>The region keyword argument above determines which Rackspace authentication
+URL the client will use to authenticate. You can specify either 'us' or
+'uk'.
+
+</para>
+            <para>Now that we've created a Client object, we can use it to work with the
+Rackspace Service Registry API. Creating a session is straightforward:
+
+</para>
+            <example>
+                <title>Create Session</title>
+                <programlisting language="python">def cb(result):
+    token = result[0]['token']
+    sessionId = result[1]
+    heartbeater = result[2]
+
+d = client.sessions.create(30)
+d.addCallback(cb)
+
+reactor.run()</programlisting>
+            </example>
+        </section>
+        <section xml:id="using-the-twisted-python-client-add-services">
+            <title>Add Services</title>
+            <para>We also now have the session ID (let's say it's 'seMkzI0mxC'), so we can
+start adding services to the session:
+
+</para>
+            <example>
+                <title>Register Service (Python)</title>
+                <programlisting language="python">def cb(result):
+    serviceId = result
+
+d = client.services.register('seMkzI0mxC', 'serviceId', {'tags': ['tag1', 'tag2', 'tag3']})
+d.addCallback(cb)
+
+reactor.run()</programlisting>
+            </example>
+        </section>
+        <section xml:id="using-the-twisted-python-client-heartbeat-the-session">
+            <title>Heartbeat the Session</title>
+            <para>When creating a session using the Twisted client, the result contains the
+response body (which contains the initial token required for heartbeating
+the session), the session ID, and a HeartBeater object. The HeartBeater
+object allows us to automatically heartbeat the session by calling the
+start() method:
+
+</para>
+            <example>
+                <title>Heartbeat Session Using Heartbeater (Python)</title>
+                <programlisting language="python">heartbeater.start()</programlisting>
+            </example>
+            <para>This causes the HeartBeater object to start heartbeating automatically,
+using the initial token. It will heartbeat the session, get the next token,
+and heartbeat the session again continuously until the stop() method is
+called.
+
+</para>
+            <para>You may also heartbeat the session manually like so:
+
+</para>
+            <example>
+                <title>Heartbeat Session Manually (Python)</title>
+                <programlisting language="python">client.sessions.heartbeat('seMkzI0mxC', 'token')</programlisting>
+            </example>
+        </section>
+        <section xml:id="using-the-twisted-python-client-integration-example">
+            <title>Integration Example</title>
+            <para>Here is a short example of a web server that registers with the Cloud
+Service Registry on startup, and uses the HeartBeater object while it is
+running in order to maintain the session:
+
+</para>
+            <example>
+                <title>A Web Server That Uses Service Registry (Python)</title>
+                <programlisting language="python">from twisted.web import server, resource
+from twisted.internet import reactor
+
+from txServiceRegistry import Client
+
+RACKSPACE_USERNAME = '' # your Rackspace username here
+RACKSPACE_KEY = '' # your Rackspace API key here
+
+client = Client(RACKSPACE_USERNAME,
+                RACKSPACE_KEY,
+                'us')
+
+class Simple(resource.Resource):
+    isLeaf = True
+    def render_GET(self, request):
+        return "&lt;html&gt;Hello, world!&lt;/html&gt;"
+
+
+def cbSession(result):
+    global heartBeater
+    sessionId = result[1]
+    heartBeater = result[2]
+    heartBeater.start()
+
+    def cbService(result):
+        print result
+
+    d = client.services.register(sessionId,
+                                 'http-service',
+                                 {'tags': ['web']})
+    d.addCallback(cbService)
+
+d = client.sessions.create(30)
+d.addCallback(cbSession)
+
+site = server.Site(Simple())
+reactor.listenTCP(8080, site)
+reactor.run()</programlisting>
+            </example>
+            <para>The code above is a simple web server that responds with "&lt;html&gt;Hello,
+world!&lt;/html&gt; on every GET request. The code that interacts with the Cloud
+Service Registry can be explained as follows:
+
+</para>
+            <para>First, the server creates a session with a heartbeat interval of 30. Since
+client.sessions.create() returns a Twisted Deferred, a callback must be
+added to it in order to use the result. This is done here:
+
+</para>
+            <example>
+                <title>Create a Session (Python)</title>
+                <programlisting language="python">d = client.sessions.create(30)
+d.addCallback(cbSession)</programlisting>
+            </example>
+            <para>The cbSesssion function takes the result of client.sessions.create() as an
+argument, and grabs the session ID as well as starts the HeartBeater. It
+then creates a service named 'http-service' and attaches it to the session.
+
+</para>
+        </section>
+    </section>
+    <section xml:id="integration-instructions-using-the-node.js-client">
+        <title>Using the Node.js Client</title>
+        <section xml:id="using-the-node.js-client-installing-the-client">
+            <title>Installing the Client</title>
+            <para>The client is available in npm. To install, you can do:
+
+</para>
+            <programlisting language="shell">npm install service-registry-client</programlisting>
+        </section>
+        <section xml:id="using-the-node.js-client-create-a-session">
+            <title>Create a Session</title>
+            <para>In order to create a session using the Node.js client, we first have
+to instantiate a client to interact with the Rackspace Service Registry:
+
+</para>
+            <example>
+                <title>Instantiate the Client (Javascript)</title>
+                <programlisting language="javascript">var Client = require('service-registry-client').Client;
+
+var username = ''; // your username here
+var key = ''; // your API key here
+var service_registry_url = 'https://dfw.registry.api.rackspace.com/v1.0/';
+
+var client = new Client(username, key, 'us', {'url': service_registry_url});</programlisting>
+            </example>
+            <para>The region keyword argument above determines which Rackspace authentication
+URL the client will use to authenticate. You can specify either 'us' or
+'uk'.
+
+</para>
+            <para>Now that we've created a Client object, we can use it to work with the
+Rackspace Service Registry API. Creating a session is straightforward:
+
+</para>
+            <example>
+                <title>Create Session (Javascript)</title>
+                <programlisting language="javascript">client.sessions.create(30, {}, function(err, seId, resp, heartbeater) {});</programlisting>
+            </example>
+        </section>
+        <section xml:id="using-the-node.js-client-add-services">
+            <title>Add Services</title>
+            <para>We also now have the session ID (let's say it's 'seMkzI0mxC'), so we can
+start adding services to the session:
+
+</para>
+            <example>
+                <title>Register Service (Javascript)</title>
+                <programlisting language="javascript">client.services.register('seMkzI0mxC',
+                         'serviceId',
+                         {'tags': ['tag1', 'tag2', 'tag3']},
+                         null, function(err, resp) {});</programlisting>
+            </example>
+        </section>
+        <section xml:id="using-the-node.js-client-heartbeat-the-session">
+            <title>Heartbeat the Session</title>
+            <para>When creating a session using the Node.js client, the result contains the
+session ID, response body (which contains the initial token required for
+heartbeating the session), and a HeartBeater object. The HeartBeater
+object allows us to automatically heartbeat the session by calling the
+start() method:
+
+</para>
+            <example>
+                <title>Heartbeat Session Using Heartbeater (Javascript)</title>
+                <programlisting language="Javascript">heartbeater.start();</programlisting>
+            </example>
+            <para>This causes the HeartBeater object to start heartbeating automatically,
+using the initial token. It will heartbeat the session, get the next token,
+and heartbeat the session again continuously until the stop() method is
+called.
+
+</para>
+            <para>You may also heartbeat the session manually like so:
+
+</para>
+            <example>
+                <title>Heartbeat Session Manually (Javascript)</title>
+                <programlisting language="javascript">client.sessions.heartbeat('seMkzI0mxC', 'token', function(err, resp) {});</programlisting>
+            </example>
+        </section>
+        <section xml:id="using-the-node.js-client-integration-example">
+            <title>Integration Example</title>
+            <para>Here is a short example of a web server that registers with the Cloud
+Service Registry on startup, and uses the HeartBeater object while it is
+running in order to maintain the session:
+
+</para>
+            <example>
+                <title>A Web Server That Uses Service Registry (Javascript)</title>
+                <programlisting language="javascript">var async = require('async');
+var Client = require('service-registry-client/lib/client').Client
+
+var username = ''; // your username here
+var key = ''; // your API key here
+
+var client = new Client(username, key, 'us', null);
+
+var http = require('http');
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello, world!');
+}).listen(9000, '127.0.0.1');
+
+async.waterfall([
+  function createSession(callback) {
+    client.sessions.create(30, {}, function(err, seId, resp, hb) {
+      hb.start();
+      callback(null, seId);
+    });
+  },
+  function createService(seId, callback) {
+    client.services.register(seId, 'webService', {}, function(err, resp) {
+      callback();
+    });
+  }
+  ],
+  function(err) {
+    if (err) {
+      console.log('An error has occurred.');
+      console.log(err);
+    }
+  }
+);</programlisting>
+            </example>
+            <para>The code above is a simple web server that responds with "Hello, world!"
+The code that interacts with the Rackspace Service Registry can be
+explained as follows:
+
+</para>
+            <para>First, the server creates a session with a heartbeat interval of 30.
+
+</para>
+            <example>
+                <title>Create Session in Web Server</title>
+                <programlisting language="javascript">function createSession(callback) {
+  client.sessions.create(30, {}, function(err, seId, resp, hb) {
+    hb.start();
+    callback(null, seId);
+  });
+},</programlisting>
+            </example>
+            <para>This function also calls start() on the HeartBeater object that is returned
+when creating a session.
+
+</para>
+            <para>Next, a service called 'webService' is created under the session ID
+returned from the API:
+
+</para>
+            <example>
+                <title>Register Service in Web Server</title>
+                <programlisting language="javascript">function createService(seId, callback) {
+  client.services.create(seId, 'webService', {}, function(err, resp) {
+    callback();
+  });
+}</programlisting>
+            </example>
+        </section>
+    </section>
+</chapter>

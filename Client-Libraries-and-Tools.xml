@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='utf-8'?>
+<chapter version="5.0" xml:id="client-libraries-and-tools" xmlns="http://docbook.org/ns/docbook" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Client Libraries and Tools</title>
+    <para>This section describes the client libraries and tools that you can use to
+interact with the API.
+
+</para>
+    <?dbhtml stop-chunking?>
+<section xml:id="client-libraries-and-tools-client-libraries">
+        <title>Client Libraries</title>
+        <section xml:id="client-libraries-node.js">
+            <title>Node.js</title>
+            <para>The official Node.js library which allows you to interact with the API can
+be found at <link xlink:href="https://github.com/racker/node-service-registry-client">https://github.com/racker/node-service-registry-client</link>.
+
+</para>
+            <programlisting language="shell">npm install service-registry-client</programlisting>
+        </section>
+        <section xml:id="client-libraries-twisted-python">
+            <title>Twisted Python</title>
+            <para>The official Twisted Python library which allows you to interact with the
+API can be found at <link xlink:href="https://github.com/racker/python-twisted-service-registry-client">https://github.com/racker/python-twisted-service-registry-client</link>.
+
+</para>
+            <programlisting language="shell">pip install txServiceRegistry</programlisting>
+        </section>
+        <section xml:id="client-libraries-python">
+            <title>Python</title>
+            <para>The official Python library which allows you to interact with the
+API can be found at <link xlink:href="https://github.com/racker/python-service-registry-client">https://github.com/racker/python-service-registry-client</link>.
+
+</para>
+            <programlisting language="shell">pip install service-registry-client</programlisting>
+        </section>
+        <section xml:id="client-libraries-java">
+            <title>Java</title>
+            <para>The official Java library which allows you to interact with the API can be
+found at <link xlink:href="https://github.com/racker/java-service-registry-client">https://github.com/racker/java-service-registry-client</link>.
+
+</para>
+        </section>
+    </section>
+    <section xml:id="client-libraries-and-tools-best-practices-for-writing-client-libraries">
+        <title>Best Practices for Writing Client Libraries</title>
+        <para>This section describes best practices which you should follow if you are
+building a custom client library.
+
+</para>
+        <section xml:id="best-practices-for-writing-client-libraries-use-persistent-connections">
+            <title>Use Persistent Connections</title>
+            <para>HTTP/1.1 defines persistent connections which you should use when talking with
+the API.
+
+</para>
+            <para>This is especially important when you are sending heartbeats and polling the
+events feed. Instead of opening a new TCP connection when you are sending a
+heartbeat or polling the events feed, re-use the existing connection. This is
+more efficient for both the client and the server.
+
+</para>
+        </section>
+        <section xml:id="best-practices-for-writing-client-libraries-make-sure-to-re-authenticate-with-the-auth-api">
+            <title>Make Sure to Re-authenticate with the Auth API</title>
+            <para>When the Service Registry API returns 401, you should try to re-authenticate
+with the Auth API and retrieve a new token. A 401 can either mean that you
+supplied an invalid token or that the token has expired.
+
+</para>
+            <para>The Auth API returns a token expiration time with the "obtain token" response,
+but some times, for various reasons, tokens are purged before the actual
+expiration time.
+
+</para>
+            <para>This is especially important because of the nature of this service. Code
+hitting the Service Registry API won't be located in a run-once-script but
+rather inside long-running processes constantly hitting the API.
+
+</para>
+        </section>
+        <section xml:id="best-practices-for-writing-client-libraries-cache-the-list-of-available-services">
+            <title>Cache the List of Available Services</title>
+            <para>To avoid interruptions in your service because of minor hiccups on your or our
+side you should cache the list services response in your client.
+
+</para>
+            <para>This will allow you to retrieve a (potentially stale) list of services from the
+cache in case a minor service interruption occurs.
+
+</para>
+        </section>
+        <section xml:id="best-practices-for-writing-client-libraries-retry-heartbeating-on-non-404-errors">
+            <title>Retry Heartbeating on Non-404 Errors</title>
+            <para>If the API endpoint returns a non 404 error (e.g 500) when heartbeating a
+session, you should immediately try to re-send the heartbeat. The error could
+indicate an intermediate instead of an actual issue.
+
+</para>
+        </section>
+    </section>
+    <section xml:id="client-libraries-and-tools-tools">
+        <title>Tools</title>
+        <section xml:id="tools-command-line-client">
+            <title>Command Line Client</title>
+            <para>Command Line Client allows you to perform different read and write operation on
+your accounts including listing of the events and updating configuration values.
+For a full list of functionality, please visit the project Github page at
+<link xlink:href="https://github.com/racker/python-service-registry-cli">https://github.com/racker/python-service-registry-cli</link>.
+
+</para>
+            <section xml:id="command-line-client-installation">
+                <title>Installation</title>
+                <para>Client library is installed using <emphasis>pip</emphasis> Python package manager.
+
+</para>
+                <programlisting language="shell">pip install service-registry-cli</programlisting>
+            </section>
+            <section xml:id="command-line-client-usage">
+                <title>Usage</title>
+                <para>For a list of the available commands, run the following command in your
+terminal:
+
+</para>
+                <programlisting language="shell">raxsr --help</programlisting>
+                <para>To view available options for a command, run the following command in your
+terminal:
+
+</para>
+                <programlisting language="shell">raxsr help &lt;resource&gt; &lt;action&gt;</programlisting>
+                <programlisting language="shell">raxsr help events list</programlisting>
+            </section>
+        </section>
+        <section xml:id="tools-long-running-process-wrapper">
+            <title>Long Running Process Wrapper</title>
+            <para>This tool written in Node.js allows you to wrap and register arbitrary
+long-running process inside the service registry. It works by executing a new
+process for the long-running process you want to wrap and registering it in the
+service registry.
+
+</para>
+            <para>If the wrapped process dies, the wrapper itself also exits which will cause
+the session to eventually expire (how long it takes depends on the heartbeat
+interval).
+
+</para>
+            <programlisting language="shell">npm install service-registry-process-wrapper</programlisting>
+            <programlisting language="shell">service-registry-wrapper --id=&lt;service id&gt; --tags=&lt;comma separated list of tags&gt; \
+          --metadata=&lt;comma separated list of key=value pairs&gt; \
+          --interval=&lt;heartbeat interval&gt; [--abort-on-failure] \
+          &lt;path to the process which is being wrapped&gt; &lt;process arguments&gt;</programlisting>
+            <para>For example:
+
+</para>
+            <programlisting language="shell">service-registry-wrapper --id=my-host1-api0 --tags=api,www
+          --metadata=port=8000,host=localhost,is_public=true \
+          --interval=20  \
+          /opt/my-app/bin/api --port=8000 --host=localhost</programlisting>
+            <para><note>Process Wrapper is a good way to register services written in programming
+languages for which the client library is not available or for the services you
+don't have the access to the source code or it would be to impractical to modify
+it (for example Apache, MySQL, etc.). If you have access to the source code and
+the client library is available you are advised to use the client library to
+integrate with the Service Registry. This approach offers the most fine
+grained control over when to register a service and when to stop sending
+heartbeats.</note>
+</para>
+        </section>
+    </section>
+</chapter>

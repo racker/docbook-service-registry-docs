@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<chapter version="5.0" xml:id="release-notes" xmlns="http://docbook.org/ns/docbook" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Release Notes</title>
+    <?dbhtml stop-chunking?>
+<section xml:id="release-notes-v1.0,-november-5,-2012">
+        <title>v1.0, November 5, 2012</title>
+        <para>These release notes correspond to the Preview for Rackspace Service
+Registry.
+
+</para>
+        <section xml:id="v1.0,-november-5,-2012-product-features">
+            <title>Product Features</title>
+            <section xml:id="product-features-service-registration-and-discovery">
+                <title>Service Registration and Discovery</title>
+                <para>Register services in the registry and get notifications via the events feed when
+a service comes online or times out.
+
+</para>
+            </section>
+            <section xml:id="product-features-notifications-via-the-events-feed">
+                <title>Notifications via the Events Feed</title>
+                <para>Events feed contains events which happened during a life-cycle of your account.
+Events include service coming online, service timing out, configuration value
+getting updated and configuration value getting removed.
+
+</para>
+            </section>
+            <section xml:id="product-features-configuration-storage">
+                <title>Configuration Storage</title>
+                <para>Store configuration values (arbitrary key-value pairs) in the centralized
+place and get notifications via the event feed when a value is updated or
+removed.
+
+</para>
+            </section>
+            <section xml:id="product-features-client-libraries-for-four-programming-languages">
+                <title>Client Libraries for Four Programming Languages</title>
+                <para>Preview release includes official client libraries for the following languages:
+
+</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Python</para>
+                    </listitem>
+                    <listitem>
+                        <para>Twisted Python</para>
+                    </listitem>
+                    <listitem>
+                        <para>Java</para>
+                    </listitem>
+                    <listitem>
+                        <para>Node.js</para>
+                    </listitem>
+                </itemizedlist>
+            </section>
+        </section>
+    </section>
+</chapter>
