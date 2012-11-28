@@ -239,7 +239,7 @@ heartbeating the session.
 </para>
             <programlisting language="shell">pip install txServiceRegistry</programlisting>
         </section>
-        <section xml:id="using-the-twisted-python-client-create-a-session-(python)">
+        <section xml:id="using-the-twisted-python-client-create-a-session-python">
             <title>Create a Session (Python)</title>
             <para>In order to create a session using the Twisted Python client, we first have
 to instantiate a client to interact with the Rackspace Service Registry:
@@ -395,16 +395,16 @@ then creates a service named 'http-service' and attaches it to the session.
 </para>
         </section>
     </section>
-    <section xml:id="integration-instructions-using-the-node.js-client">
+    <section xml:id="integration-instructions-using-the-nodejs-client">
         <title>Using the Node.js Client</title>
-        <section xml:id="using-the-node.js-client-installing-the-client">
+        <section xml:id="using-the-nodejs-client-installing-the-client">
             <title>Installing the Client</title>
             <para>The client is available in npm. To install, you can do:
 
 </para>
             <programlisting language="shell">npm install service-registry-client</programlisting>
         </section>
-        <section xml:id="using-the-node.js-client-create-a-session">
+        <section xml:id="using-the-nodejs-client-create-a-session">
             <title>Create a Session</title>
             <para>In order to create a session using the Node.js client, we first have
 to instantiate a client to interact with the Rackspace Service Registry:
@@ -434,7 +434,7 @@ Rackspace Service Registry API. Creating a session is straightforward:
                 <programlisting language="javascript">client.sessions.create(30, {}, function(err, seId, resp, heartbeater) {});</programlisting>
             </example>
         </section>
-        <section xml:id="using-the-node.js-client-add-services">
+        <section xml:id="using-the-nodejs-client-add-services">
             <title>Add Services</title>
             <para>We also now have the session ID (let's say it's 'seMkzI0mxC'), so we can
 start adding services to the session:
@@ -448,7 +448,7 @@ start adding services to the session:
                          null, function(err, resp) {});</programlisting>
             </example>
         </section>
-        <section xml:id="using-the-node.js-client-heartbeat-the-session">
+        <section xml:id="using-the-nodejs-client-heartbeat-the-session">
             <title>Heartbeat the Session</title>
             <para>When creating a session using the Node.js client, the result contains the
 session ID, response body (which contains the initial token required for
@@ -475,7 +475,7 @@ called.
                 <programlisting language="javascript">client.sessions.heartbeat('seMkzI0mxC', 'token', function(err, resp) {});</programlisting>
             </example>
         </section>
-        <section xml:id="using-the-node.js-client-integration-example">
+        <section xml:id="using-the-nodejs-client-integration-example">
             <title>Integration Example</title>
             <para>Here is a short example of a web server that registers with the Cloud
 Service Registry on startup, and uses the HeartBeater object while it is

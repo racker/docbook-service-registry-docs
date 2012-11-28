@@ -1,14 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <chapter version="5.0" xml:id="release-notes" xmlns="http://docbook.org/ns/docbook" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>Release Notes</title>
-    <?dbhtml stop-chunking?>
-<section xml:id="release-notes-v1.0,-november-5,-2012">
+    <section xml:id="release-notes-v10-november-5-2012">
         <title>v1.0, November 5, 2012</title>
         <para>These release notes correspond to the Preview for Rackspace Service
 Registry.
 
 </para>
-        <section xml:id="v1.0,-november-5,-2012-product-features">
+        <section xml:id="v10-november-5-2012-product-features">
             <title>Product Features</title>
             <section xml:id="product-features-service-registration-and-discovery">
                 <title>Service Registration and Discovery</title>

@@ -55,12 +55,12 @@ updated or deleted.
 <link linkend="concepts">Concepts</link> chapter.
 
 </para>
-            <para><note>Rackspace Service Registry is currently in a preview phase. If you want
+            <note>
+                <para>Rackspace Service Registry is currently in a preview phase. If you want
 to test it out, please fill out <link xlink:href="https://surveys.rackspace.com/Survey.aspx?s=f3d6e51580ab4510a564487fafdafdfd">this survey</link>
 and if you are qualified we will get back to you with the details on how to
-start using the product.</note>
-
-</para>
+start using the product.</para>
+            </note>
         </section>
     </section>
     <section xml:id="overview-intended-audience">

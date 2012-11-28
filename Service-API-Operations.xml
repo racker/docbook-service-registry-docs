@@ -266,10 +266,10 @@ instead of opening a new connection for every heartbeat request.
 re-use the same HTTP connection when heartbeating a session.
 
 </para>
-            <para><note>Heartbeating a session multiple times using the same token has an
-undefined behavior.</note>
-
-</para>
+            <note>
+                <para>Heartbeating a session multiple times using the same token has an
+undefined behavior.</para>
+            </note>
             <informaltable rules="all">
                 <thead xmlns="http://docbook.org/ns/docbook">
                     <tr>
@@ -799,14 +799,14 @@ value is updated or removed, or a session times out, an event is inserted.
         </section>
         <section xml:id="events-event-types">
             <title>Event Types</title>
-            <section xml:id="event-types-service.join">
+            <section xml:id="event-types-servicejoin">
                 <title>service.join</title>
                 <para>This event represents a new service joining a session. The payload contains
 a service object.
 
 </para>
             </section>
-            <section xml:id="event-types-services.timeout">
+            <section xml:id="event-types-servicestimeout">
                 <title>services.timeout</title>
                 <para>This event represents a session timeout, which occurs when a client doesn't
 heartbeat a session within the defined timeout. The payload contains a list
@@ -814,7 +814,7 @@ of services associated with the session.
 
 </para>
             </section>
-            <section xml:id="event-types-configuration_value.update">
+            <section xml:id="event-types-configuration_valueupdate">
                 <title>configuration_value.update</title>
                 <para>This event represents a configuration value being updated. The payload
 contains the configuration value id, the old value, and the new value. If
@@ -822,7 +822,7 @@ this is the first time the value has been set, the old value will be <emphasis>n
 
 </para>
             </section>
-            <section xml:id="event-types-configuration_value.remove">
+            <section xml:id="event-types-configuration_valueremove">
                 <title>configuration_value.remove</title>
                 <para>This event represents a configuration value being removed. The payload
 contains the configuration value id and the old value.

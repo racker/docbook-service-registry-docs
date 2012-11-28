@@ -8,7 +8,7 @@ interact with the API.
     <?dbhtml stop-chunking?>
 <section xml:id="client-libraries-and-tools-client-libraries">
         <title>Client Libraries</title>
-        <section xml:id="client-libraries-node.js">
+        <section xml:id="client-libraries-nodejs">
             <title>Node.js</title>
             <para>The official Node.js library which allows you to interact with the API can
 be found at <link xlink:href="https://github.com/racker/node-service-registry-client">https://github.com/racker/node-service-registry-client</link>.
@@ -154,15 +154,16 @@ interval).
           --metadata=port=8000,host=localhost,is_public=true \
           --interval=20  \
           /opt/my-app/bin/api --port=8000 --host=localhost</programlisting>
-            <para><note>Process Wrapper is a good way to register services written in programming
+            <note>
+                <para>Process Wrapper is a good way to register services written in programming
 languages for which the client library is not available or for the services you
 don't have the access to the source code or it would be to impractical to modify
 it (for example Apache, MySQL, etc.). If you have access to the source code and
 the client library is available you are advised to use the client library to
 integrate with the Service Registry. This approach offers the most fine
 grained control over when to register a service and when to stop sending
-heartbeats.</note>
-</para>
+heartbeats.</para>
+            </note>
         </section>
     </section>
 </chapter>
