@@ -38,8 +38,13 @@
     with the code in the file named “README”, “COPYING” or “LICENSE” or like caption.
     </para>
   </abstract>
+  <!-- Please generate the following when you create sr-devguide.xml:-->
+  <raxm:metadata xmlns:raxm="http://docs.rackspace.com/api/metadata">
+    <raxm:displayname>API Developer Guide</raxm:displayname>
+    <raxm:product version="v1.0">rsr</raxm:product>
+    <raxm:priority>20</raxm:priority>
+  </raxm:metadata>
 </info>
-
   <include xmlns="http://www.w3.org/2001/XInclude" href="Overview.xml"/>
   <include xmlns="http://www.w3.org/2001/XInclude" href="Getting-Started.xml"/>
   <include xmlns="http://www.w3.org/2001/XInclude" href="Concepts.xml"/>
