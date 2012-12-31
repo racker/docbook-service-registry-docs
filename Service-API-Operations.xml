@@ -323,12 +323,12 @@ heartbeated to indicate that the session and its services are still alive.
                     <tr>
                         <td>id</td>
                         <td>Service id</td>
-                        <td>Immutable, String between 3 and 55 characters long, String matching the regex /^[a-z0-9_-]{3,55}$/i</td>
+                        <td>Immutable, String between 3 and 65 characters long, String matching the regex /^[a-z0-9_-]{3,65}$/i</td>
                     </tr>
                     <tr>
                         <td>session_id</td>
                         <td>Session id.</td>
-                        <td>Immutable, String between 1 and 255 characters long</td>
+                        <td>Immutable, String between 1 and 15 characters long</td>
                     </tr>
                     <tr>
                         <td>metadata</td>
