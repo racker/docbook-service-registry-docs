@@ -635,7 +635,7 @@ system.
                     <tr>
                         <td>id</td>
                         <td>Configuration value id</td>
-                        <td>Immutable, String between 3 and 32 characters long, String matching the regex /^[a-z0-9_\-\.]{3,32}$/i</td>
+                        <td>Immutable, String between 3 and 170 characters long, String matching the regex /^[a-z0-9_\-\.]{3,170}$/i</td>
                     </tr>
                 </tbody>
             </informaltable>
