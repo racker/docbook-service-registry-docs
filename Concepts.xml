@@ -100,7 +100,7 @@ for this value is `/production/cassandra/listen_ip`.
                 <para>/production/cassandra/listen_port (namespace is /production/cassandra)</para>
             </listitem>
         </itemizedlist>
-        <para><figure><title>Configuration Namespaces visualized using a tree</title><mediaobject><imageobject><imagedata fileref="https://www.lucidchart.com/publicSegments/view/5112ccdb-ee10-4808-abe2-6fa50a00093e/image.png" align="center"/></imageobject></mediaobject></figure>
+        <para><figure><title>Configuration Namespaces visualized using a tree</title><mediaobject><imageobject><imagedata fileref="/img/configuration_namespaces_tree_visualization.png" align="center"/></imageobject></mediaobject></figure>
 
 </para>
         <para>Namespaces are also ephemeral which means they only exist if at least one
@@ -153,6 +153,9 @@ incidents occur:
                 <para>A session times out</para>
             </listitem>
         </itemizedlist>
+        <para><figure><title>Events feed visualized using a timeline</title><mediaobject><imageobject><imagedata fileref="/img/events_feed_timeline_visualization.png" align="center"/></imageobject></mediaobject></figure>
+
+</para>
         <para>A typical automation use case would be periodically polling the event feed
 and acting on the returned events.
 
