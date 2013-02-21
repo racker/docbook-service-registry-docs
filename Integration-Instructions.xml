@@ -57,7 +57,7 @@ X-Auth-Token: eaaafd18-0fed-4b3a-81b4-663c99ec1cbb</programlisting>
     "metadata": {
         "region": "dfw"
     },
-    "heartbeat_timeout": 30
+    "heartbeat_timeout": 3
 }</programlisting>
             </example>
             <para>The location header of the response should look something like this:
