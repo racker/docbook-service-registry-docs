@@ -1,7 +1,90 @@
 <?xml version='1.0' encoding='utf-8'?>
 <chapter version="5.0" xml:id="release-notes" xmlns="http://docbook.org/ns/docbook" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>Release Notes</title>
-    <section xml:id="release-notes-v10-november-5-2012">
+    <?dbhtml stop-chunking?>
+<section xml:id="release-notes-v20-march-2013">
+        <title>v2.0, March, 2013</title>
+        <section xml:id="v20-march-2013-backward-incompatible-changes">
+            <title>Backward incompatible changes</title>
+            <section xml:id="backward-incompatible-changes-merging-of-sessions-and-services">
+                <title>Merging of Sessions and Services</title>
+                <para>To make the API simpler, more user friendly and geared towards a common use
+case, "Session" object has been merged with the "Service" object.
+
+</para>
+                <para>The following attributes have moved from Session to Service object:
+
+</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>heartbeat_timeout</para>
+                    </listitem>
+                    <listitem>
+                        <para>last_seen</para>
+                    </listitem>
+                </itemizedlist>
+                <para>All the "session" API endpoints have been removed and you now heartbeat a service
+instead of a session.
+
+</para>
+                <para>As a consequence services.timeout event has been renamed to service.timeout
+and the payload attribute now contains Service object which has timed out.
+
+</para>
+                <para>Note: This change is backward incompatible.
+
+</para>
+                <para>If you are using an official client library you need to upgrade to version 0.2.0
+and update your code which calls the client library.
+
+</para>
+            </section>
+        </section>
+        <section xml:id="v20-march-2013-product-features">
+            <title>Product Features</title>
+            <para>Added new service.remove event. This event is inserted when a user explicitly
+removes a service using an API call.
+
+</para>
+            <para>This event allows users to distinguish between an implicit service timeout and
+explicit service removal triggered by a user.
+
+</para>
+        </section>
+    </section>
+    <?dbhtml stop-chunking?>
+<section xml:id="release-notes-v11-february-2013">
+        <title>v1.1, February, 2013</title>
+        <section xml:id="v11-february-2013-product-features">
+            <title>Product Features</title>
+            <section xml:id="product-features-configuration-namespaces">
+                <title>Configuration Namespaces</title>
+                <para>Added support for namespaces to the configuration API.
+
+</para>
+                <para>Namespace allows you to organize different (related) configuration values
+together in a hierarchical manner. They also make retrieving a subset of
+configuration values easier and more efficient.
+
+</para>
+                <para>For more information, please see the <link linkend="concepts">Concepts</link> section.
+
+</para>
+            </section>
+        </section>
+        <section xml:id="v11-february-2013-improvements-bug-fixes">
+            <title>Improvements, bug fixes</title>
+            <section xml:id="improvements-bug-fixes-improved-reliability-and-decreased-response-times-for-most-of-the-api-operations">
+                <title>Improved reliability and decreased response times for most of the API operations</title>
+                <para>Improved reliability and performance and decreased response times for the
+"heartbeat" and all of the "list" operations.
+
+</para>
+            </section>
+        </section>
+    </section>
+    <?dbhtml stop-chunking?>
+<section xml:id="release-notes-v10-november-5-2012">
         <title>v1.0, November 5, 2012</title>
         <para>These release notes correspond to the Preview for Rackspace Service
 Registry.

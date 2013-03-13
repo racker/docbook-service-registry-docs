@@ -54,14 +54,14 @@
         </section>
     </section>
     <?dbhtml stop-chunking?>
-<section xml:id="service-api-operations-sessions">
-        <title>Sessions</title>
-        <para>Sessions give clients the ability to manage persistent context for one or more
-services. This context is then used for other operations. The client is
-responsible for sending heartbeats to maintain the session.
+<section xml:id="service-api-operations-services">
+        <title>Services</title>
+        <para>A service represents an instance of a long running process on your server.
+The client is responsible for sending heartbeats to indicate that the service is
+still alive.
 
 </para>
-        <section xml:id="sessions-attributes">
+        <section xml:id="services-attributes">
             <title>Attributes</title>
             <informaltable rules="all">
                 <thead xmlns="http://docbook.org/ns/docbook">
@@ -78,273 +78,9 @@ responsible for sending heartbeats to maintain the session.
                         <td>Integer, Value (3..120)</td>
                     </tr>
                     <tr>
-                        <td>metadata</td>
-                        <td>Arbitrary key/value pairs.</td>
-                        <td>Optional, Hash [String,String between 1 and 255 characters long:String,String between 1 and 255 characters long], Array or object with number of items between 0 and 20</td>
-                    </tr>
-                </tbody>
-            </informaltable>
-        </section>
-        <section xml:id="sessions-list-sessions">
-            <title>List Sessions</title>
-            <informaltable rules="all">
-                <thead xmlns="http://docbook.org/ns/docbook">
-                    <tr>
-                        <td>Verb</td>
-                        <td>URI</td>
-                        <td>Description</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>GET</td>
-                        <td>/sessions</td>
-                        <td>Returns sessions for this account.</td>
-                    </tr>
-                </tbody>
-            </informaltable>
-            <para>There are no parameters for this call.
-
-</para>
-            <para>Normal Response Code: 200
-
-</para>
-            <para>Error Response Codes: 401, 403, 500, 503
-
-</para>
-            <example>
-                <title>List Sessions Response</title>
-                <programlisting language="javascript">{
-    "values": [
-        {
-            "id": "sessionId",
-            "metadata": {
-                "region": "dfw"
-            },
-            "heartbeat_timeout": 3,
-            "last_seen": null
-        }
-    ],
-    "metadata": {
-        "count": 1,
-        "limit": 100,
-        "marker": null,
-        "next_marker": null,
-        "next_href": null
-    }
-}</programlisting>
-            </example>
-        </section>
-        <section xml:id="sessions-get-session">
-            <title>Get Session</title>
-            <informaltable rules="all">
-                <thead xmlns="http://docbook.org/ns/docbook">
-                    <tr>
-                        <td>Verb</td>
-                        <td>URI</td>
-                        <td>Description</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>GET</td>
-                        <td>/sessions/sessionId</td>
-                        <td>Retrieves a single session.</td>
-                    </tr>
-                </tbody>
-            </informaltable>
-            <para>There are no parameters for this call.
-
-</para>
-            <para>Normal Response Code: 200
-
-</para>
-            <para>Error Response Codes: 401, 403, 500, 503
-
-</para>
-            <example>
-                <title>Get Session Response</title>
-                <programlisting language="javascript">{
-    "id": "sessionId",
-    "metadata": {
-        "region": "dfw"
-    },
-    "heartbeat_timeout": 3,
-    "last_seen": null
-}</programlisting>
-            </example>
-        </section>
-        <section xml:id="sessions-create-session">
-            <title>Create Session</title>
-            <informaltable rules="all">
-                <thead xmlns="http://docbook.org/ns/docbook">
-                    <tr>
-                        <td>Verb</td>
-                        <td>URI</td>
-                        <td>Description</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>POST</td>
-                        <td>/sessions</td>
-                        <td>Creates a new session.</td>
-                    </tr>
-                </tbody>
-            </informaltable>
-            <para>Normal Response Code: (201) 'Location' header contains a link to the newly
-created session and the body contains the token which should be used
-when initially heartbeating this session.
-
-</para>
-            <para>Error Response Codes: 400, 401, 403, 500, 503
-
-</para>
-            <example>
-                <title>Create Session Request</title>
-                <programlisting language="javascript">{
-    "metadata": {
-        "region": "dfw"
-    },
-    "heartbeat_timeout": 3
-}</programlisting>
-            </example>
-            <example>
-                <title>Create Session Response</title>
-                <programlisting language="javascript">{
-    "token": "6bc8d050-f86a-11e1-a89e-ca2ffe480b20"
-}</programlisting>
-            </example>
-        </section>
-        <section xml:id="sessions-update-session">
-            <title>Update Session</title>
-            <informaltable rules="all">
-                <thead xmlns="http://docbook.org/ns/docbook">
-                    <tr>
-                        <td>Verb</td>
-                        <td>URI</td>
-                        <td>Description</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>PUT</td>
-                        <td>/sessions/sessionId</td>
-                        <td>Updates an existing session.</td>
-                    </tr>
-                </tbody>
-            </informaltable>
-            <para>Normal Response Code: (204) This code contains no content with an empty
-response body.
-
-</para>
-            <para>Error Response Codes: 400, 401, 403, 404, 500, 503
-
-</para>
-        </section>
-        <section xml:id="sessions-heartbeat-a-session">
-            <title>Heartbeat a Session</title>
-            <para>Heartbeating is used for telling our service that the session is still
-alive. The interval in which you need to hearbeat the session is dictated
-by the <emphasis>heartbeat_timeout</emphasis> attribute on the session object.
-
-</para>
-            <para>For example, if you use a <emphasis>heartbeat_timeout</emphasis> of <emphasis>30</emphasis> seconds, this means
-that you need to heartbeat the session every 30 seconds or more often.
-Because of possible network delay and other factors, you are advised to
-heartbeat your session at least 3 seconds sooner than the
-<emphasis>heartbeat_timeout</emphasis>. In this example it would be every <emphasis>27</emphasis> seconds.
-
-</para>
-            <para>When you heartbeat a session, you are advised to use an
-<link xlink:href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec8.html">HTTP/1.1 persistent connection</link>
-instead of opening a new connection for every heartbeat request.
-
-</para>
-            <para>All of the official client libraries listed on the
-<link linkend="client-libraries-and-tools-client-libraries">Client Libraries and Tools</link> page
-re-use the same HTTP connection when heartbeating a session.
-
-</para>
-            <note>
-                <para>Heartbeating a session multiple times using the same token has an
-undefined behavior.</para>
-            </note>
-            <informaltable rules="all">
-                <thead xmlns="http://docbook.org/ns/docbook">
-                    <tr>
-                        <td>Verb</td>
-                        <td>URI</td>
-                        <td>Description</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>POST</td>
-                        <td>/sessions/sessionId/heartbeat</td>
-                        <td>Heartbeat a session.</td>
-                    </tr>
-                </tbody>
-            </informaltable>
-            <para>Normal Response Code: (200), Response body contains a token which must be
-used on the next heartbeat.
-
-</para>
-            <para>Error Response Codes: 400, 401, 403, 404, 500, 503
-
-</para>
-            <example>
-                <title>Session Heartbeat Request</title>
-                <programlisting language="javascript">{
-    "token": "6bc8d050-f86a-11e1-a89e-ca2ffe480b20"
-}</programlisting>
-            </example>
-            <para>If this is a first heartbeat request for a session, body must include an
-initial heartbeat token which has been returned when you created a session.
-Otherwise you must include a token which was included in the previous
-heartbeat response body.
-
-</para>
-            <example>
-                <title>Session Heartbeat Response</title>
-                <programlisting language="javascript">{
-    "token": "36865510-f7da-11e1-b732-793f90dd0c35"
-}</programlisting>
-            </example>
-            <para>Response body contains a token which you mean include next time you heartbeat
-this session.
-
-</para>
-        </section>
-    </section>
-    <?dbhtml stop-chunking?>
-<section xml:id="service-api-operations-services">
-        <title>Services</title>
-        <para>A service represents an instance of a long running process on your server.
-Each service belongs to a single session which must be periodically
-heartbeated to indicate that the session and its services are still alive.
-
-</para>
-        <section xml:id="services-attributes">
-            <title>Attributes</title>
-            <informaltable rules="all">
-                <thead xmlns="http://docbook.org/ns/docbook">
-                    <tr>
-                        <td>Name</td>
-                        <td>Description</td>
-                        <td>Validation</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
                         <td>id</td>
                         <td>Service id</td>
                         <td>Immutable, String between 3 and 65 characters long, String matching the regex /^[a-z0-9_\-\.]{3,65}$/i</td>
-                    </tr>
-                    <tr>
-                        <td>session_id</td>
-                        <td>Session id.</td>
-                        <td>Immutable, String between 1 and 15 characters long</td>
                     </tr>
                     <tr>
                         <td>metadata</td>
@@ -422,13 +158,13 @@ services by <emphasis>tag</emphasis> with the optional query parameter <emphasis
     "values": [
         {
             "id": "dfw1-api",
-            "session_id": "sessionId",
             "tags": [],
-            "metadata": {}
+            "metadata": {},
+            "heartbeat_timeout": 3,
+            "last_seen": null
         },
         {
             "id": "dfw1-db1",
-            "session_id": "sessionId",
             "tags": [
                 "database",
                 "mysql"
@@ -438,7 +174,9 @@ services by <emphasis>tag</emphasis> with the optional query parameter <emphasis
                 "port": "3306",
                 "ip": "127.0.0.1",
                 "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
-            }
+            },
+            "heartbeat_timeout": 3,
+            "last_seen": null
         }
     ],
     "metadata": {
@@ -456,7 +194,6 @@ services by <emphasis>tag</emphasis> with the optional query parameter <emphasis
     "values": [
         {
             "id": "dfw1-db1",
-            "session_id": "sessionId",
             "tags": [
                 "database",
                 "mysql"
@@ -466,7 +203,9 @@ services by <emphasis>tag</emphasis> with the optional query parameter <emphasis
                 "port": "3306",
                 "ip": "127.0.0.1",
                 "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
-            }
+            },
+            "heartbeat_timeout": 3,
+            "last_seen": null
         }
     ],
     "metadata": {
@@ -510,7 +249,6 @@ services by <emphasis>tag</emphasis> with the optional query parameter <emphasis
                 <title>Get Service Response</title>
                 <programlisting language="javascript">{
     "id": "dfw1-db1",
-    "session_id": "sessionId",
     "tags": [
         "database",
         "mysql"
@@ -520,7 +258,9 @@ services by <emphasis>tag</emphasis> with the optional query parameter <emphasis
         "port": "3306",
         "ip": "127.0.0.1",
         "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
-    }
+    },
+    "heartbeat_timeout": 3,
+    "last_seen": null
 }</programlisting>
             </example>
         </section>
@@ -563,7 +303,13 @@ created service.
         "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
     },
     "id": "dfw1-db1",
-    "session_id": "sessionId"
+    "heartbeat_timeout": 3
+}</programlisting>
+            </example>
+            <example>
+                <title>Service Create Response</title>
+                <programlisting language="javascript">{
+    "token": "36865510-f7da-11e1-b732-793f90dd0c35"
 }</programlisting>
             </example>
         </section>
@@ -590,6 +336,80 @@ response body.
 
 </para>
             <para>Error Response Codes: 400, 401, 403, 404, 500, 503
+
+</para>
+        </section>
+        <section xml:id="services-heartbeat-a-service">
+            <title>Heartbeat a Service</title>
+            <para>Heartbeating is used for telling our service that the service is still
+alive. The interval in which you need to hearbeat the service is dictated
+by the <emphasis>heartbeat_timeout</emphasis> attribute on the service object.
+
+</para>
+            <para>For example, if you use a <emphasis>heartbeat_timeout</emphasis> of <emphasis>30</emphasis> seconds, this means
+that you need to heartbeat the service every 30 seconds or more often.
+Because of possible network delay and other factors, you are advised to
+heartbeat your service at least 3 seconds sooner than the
+<emphasis>heartbeat_timeout</emphasis>. In this example it would be every <emphasis>27</emphasis> seconds.
+
+</para>
+            <para>When you heartbeat a service, you are advised to use an
+<link xlink:href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec8.html">HTTP/1.1 persistent connection</link>
+instead of opening a new connection for every heartbeat request.
+
+</para>
+            <para>All of the official client libraries listed on the
+<link linkend="client-libraries-and-tools-client-libraries">Client Libraries and Tools</link> page
+re-use the same HTTP connection when heartbeating a service.
+
+</para>
+            <note>
+                <para>Heartbeating a service multiple times using the same token has an
+undefined behavior.</para>
+            </note>
+            <informaltable rules="all">
+                <thead xmlns="http://docbook.org/ns/docbook">
+                    <tr>
+                        <td>Verb</td>
+                        <td>URI</td>
+                        <td>Description</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>POST</td>
+                        <td>/services/serviceId/heartbeat</td>
+                        <td>Heartbeat a service.</td>
+                    </tr>
+                </tbody>
+            </informaltable>
+            <para>Normal Response Code: (200), Response body contains a token which must be
+used on the next heartbeat.
+
+</para>
+            <para>Error Response Codes: 400, 401, 403, 404, 500, 503
+
+</para>
+            <example>
+                <title>Service Heartbeat Request</title>
+                <programlisting language="javascript">{
+    "token": "1c640b20-8b71-11e2-9696-51b20b6220c3"
+}</programlisting>
+            </example>
+            <para>If this is a first heartbeat request for a service , body must include an
+initial heartbeat token which has been returned when you created a service.
+Otherwise you must include a token which was included in the previous
+heartbeat response body.
+
+</para>
+            <example>
+                <title>Service Heartbeat Response</title>
+                <programlisting language="javascript">{
+    "token": "36865510-f7da-11e1-b732-793f90dd0c35"
+}</programlisting>
+            </example>
+            <para>Response body contains a token which you mean include next time you heartbeat
+this service.
 
 </para>
         </section>
@@ -891,8 +711,8 @@ response body.
 <section xml:id="service-api-operations-events">
         <title>Events</title>
         <para>Events feed contains a list of events which occurred during the life-time
-of your account. Every time a service joins a session, a configuration
-value is updated or removed, or a session times out, an event is inserted.
+of your account. Every time a service is created, a configuration
+value is updated or removed, or a service times out, an event is inserted.
 
 </para>
         <section xml:id="events-event-object-attributes">
@@ -933,7 +753,7 @@ value is updated or removed, or a session times out, an event is inserted.
             <title>Event Types</title>
             <section xml:id="event-types-servicejoin">
                 <title>service.join</title>
-                <para>This event represents a new service joining a session. The payload contains
+                <para>This event represents a new service joining the registry. The payload contains
 a service object.
 
 </para>
@@ -945,46 +765,57 @@ a service object.
     "type": "service.join",
     "payload": {
         "id": "dfw1-api",
-        "session_id": "sessionId",
+        "heartbeat_timeout": 3,
         "tags": [],
         "metadata": {}
     }
 }</programlisting>
                 </example>
             </section>
-            <section xml:id="event-types-servicestimeout">
-                <title>services.timeout</title>
-                <para>This event represents a session timeout, which occurs when a client doesn't
-heartbeat a session within the defined timeout. The payload contains a list
-of service objects associated with the session.
+            <section xml:id="event-types-serviceremove">
+                <title>service.remove</title>
+                <para>This event is inserted when a user deletes a service using an API call. The 
+payload contains a deleted service object.
 
 </para>
                 <example>
-                    <title>services.timeout Example Event Object</title>
+                    <title>service.remove Example Event Object</title>
                     <programlisting language="javascript">{
-    "type": "services.timeout",
-    "payload": [
-        {
-            "id": "dfw1-api",
-            "session_id": "seBlTTbxKK",
-            "tags": [],
-            "metadata": {}
-        },
-        {
-            "id": "dfw1-db1",
-            "session_id": "seBlTTbxKK",
-            "tags": [
-                "database",
-                "mysql"
-            ],
-            "metadata": {
-                "region": "dfw",
-                "port": "3306",
-                "ip": "127.0.0.1",
-                "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
-            }
+    "type": "service.remove",
+    "payload": {
+        "id": "dfw1-db1",
+        "heartbeat_timeout": 3,
+        "tags": [
+            "database",
+            "mysql"
+        ],
+        "metadata": {
+            "region": "dfw",
+            "port": "3306",
+            "ip": "127.0.0.1",
+            "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
         }
-    ]
+    }
+}</programlisting>
+                </example>
+            </section>
+            <section xml:id="event-types-servicetimeout">
+                <title>service.timeout</title>
+                <para>This event represents a service timeout, which occurs when a client doesn't
+heartbeat a service within the defined timeout. The payload contains a service
+object.
+
+</para>
+                <example>
+                    <title>service.timeout Example Event Object</title>
+                    <programlisting language="javascript">{
+    "type": "service.timeout",
+    "payload": {
+        "id": "dfw1-api",
+        "heartbeat_timeout": 3,
+        "tags": [],
+        "metadata": {}
+    }
 }</programlisting>
                 </example>
             </section>
@@ -1068,7 +899,7 @@ returned.
             "type": "service.join",
             "payload": {
                 "id": "dfw1-api",
-                "session_id": "sessionId",
+                "heartbeat_timeout": 3,
                 "tags": [],
                 "metadata": {}
             }
@@ -1077,7 +908,24 @@ returned.
             "type": "service.join",
             "payload": {
                 "id": "dfw1-db1",
-                "session_id": "sessionId",
+                "heartbeat_timeout": 3,
+                "tags": [
+                    "database",
+                    "mysql"
+                ],
+                "metadata": {
+                    "region": "dfw",
+                    "port": "3306",
+                    "ip": "127.0.0.1",
+                    "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
+                }
+            }
+        },
+        {
+            "type": "service.remove",
+            "payload": {
+                "id": "dfw1-db1",
+                "heartbeat_timeout": 3,
                 "tags": [
                     "database",
                     "mysql"
@@ -1103,7 +951,7 @@ returned.
             "payload": {
                 "old_value": null,
                 "new_value": "test value 123456",
-                "configuration_value_id": "configId"
+                "configuration_value_id": "configId1"
             }
         },
         {
@@ -1111,7 +959,7 @@ returned.
             "payload": {
                 "old_value": null,
                 "new_value": "test value 123456",
-                "configuration_value_id": "configId1"
+                "configuration_value_id": "configId"
             }
         },
         {
@@ -1125,16 +973,24 @@ returned.
             "type": "configuration_value.update",
             "payload": {
                 "old_value": null,
-                "new_value": "value for /production/zookeeper/listen_ip",
-                "configuration_value_id": "/production/zookeeper/listen_ip"
+                "new_value": "value for /production/cassandra/rpc_server/timeout",
+                "configuration_value_id": "/production/cassandra/rpc_server/timeout"
             }
         },
         {
             "type": "configuration_value.update",
             "payload": {
                 "old_value": null,
-                "new_value": "value for /production/cassandra/rpc_server/timeout",
-                "configuration_value_id": "/production/cassandra/rpc_server/timeout"
+                "new_value": "value for /production/cassandra/rpc_server/type",
+                "configuration_value_id": "/production/cassandra/rpc_server/type"
+            }
+        },
+        {
+            "type": "configuration_value.update",
+            "payload": {
+                "old_value": null,
+                "new_value": "value for /production/zookeeper/listen_ip",
+                "configuration_value_id": "/production/zookeeper/listen_ip"
             }
         },
         {
@@ -1157,135 +1013,22 @@ returned.
             "type": "configuration_value.update",
             "payload": {
                 "old_value": null,
-                "new_value": "value for /production/cassandra/rpc_server/type",
-                "configuration_value_id": "/production/cassandra/rpc_server/type"
-            }
-        },
-        {
-            "type": "configuration_value.update",
-            "payload": {
-                "old_value": null,
                 "new_value": "value for /production/zookeeper/listen_port",
                 "configuration_value_id": "/production/zookeeper/listen_port"
             }
         },
         {
-            "type": "services.timeout",
-            "payload": [
-                {
-                    "id": "dfw1-api",
-                    "session_id": "seBlTTbxKK",
-                    "tags": [],
-                    "metadata": {}
-                },
-                {
-                    "id": "dfw1-db1",
-                    "session_id": "seBlTTbxKK",
-                    "tags": [
-                        "database",
-                        "mysql"
-                    ],
-                    "metadata": {
-                        "region": "dfw",
-                        "port": "3306",
-                        "ip": "127.0.0.1",
-                        "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
-                    }
-                }
-            ]
-        }
-    ],
-    "metadata": {
-        "count": 13,
-        "limit": 100,
-        "marker": null,
-        "next_marker": null,
-        "next_href": null
-    }
-}</programlisting>
-            </example>
-        </section>
-    </section>
-    <?dbhtml stop-chunking?>
-<section xml:id="service-api-operations-views">
-        <title>Views</title>
-        <para>Views contain a combination of data that usually includes multiple different
-objects. The primary purpose of a view is to save API calls and make data
-retrieval more efficient. Instead of doing multiple API calls and then
-combining the result yourself, you can perform a single API call against the
-view endpoint.
-
-</para>
-        <section xml:id="views-get-overview">
-            <title>Get Overview</title>
-            <informaltable rules="all">
-                <thead xmlns="http://docbook.org/ns/docbook">
-                    <tr>
-                        <td>Verb</td>
-                        <td>URI</td>
-                        <td>Description</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>GET</td>
-                        <td>/views/overview</td>
-                        <td>Returns the overview view for this account.</td>
-                    </tr>
-                </tbody>
-            </informaltable>
-            <para>There are no required parameters for this call.
-
-</para>
-            <para>Normal Response Code: 200
-
-</para>
-            <para>Error Response Codes: 400, 401, 403, 404, 500, 503
-
-</para>
-            <para>This view includes a list of sessions on your account and each session's
-child service objects.
-
-</para>
-            <example>
-                <title>Get Overview Response</title>
-                <programlisting language="javascript">{
-    "values": [
-        {
-            "session": {
-                "id": "seId0",
-                "metadata": {
-                    "region": "dfw"
-                },
+            "type": "service.timeout",
+            "payload": {
+                "id": "dfw1-api",
                 "heartbeat_timeout": 3,
-                "last_seen": null
-            },
-            "services": [
-                {
-                    "id": "dfw1-api",
-                    "session_id": "seId0",
-                    "tags": [],
-                    "metadata": {}
-                },
-                {
-                    "id": "dfw1-db1",
-                    "session_id": "seId0",
-                    "tags": [
-                        "database",
-                        "mysql"
-                    ],
-                    "metadata": {
-                        "region": "dfw",
-                        "port": "3306",
-                        "ip": "127.0.0.1",
-                        "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
-                    }
-                }
-            ]
+                "tags": [],
+                "metadata": {}
+            }
         }
     ],
     "metadata": {
-        "count": 1,
+        "count": 14,
         "limit": 100,
         "marker": null,
         "next_marker": null,

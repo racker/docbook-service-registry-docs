@@ -2,25 +2,16 @@
 <chapter version="5.0" xml:id="concepts" xmlns="http://docbook.org/ns/docbook" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>Concepts</title>
     <?dbhtml stop-chunking?>
-<section xml:id="concepts-session">
-        <title>Session</title>
-        <para>Sessions give clients the ability to manage persistent context for one or more
-services. This context is then used for other operations. The client is
-responsible for sending heartbeats to maintain the session.
-
-</para>
-        <para>If a session is not heartbeated in the defined timeout interval, the
-session is considered dead. All of its child Service objects are deleted,
-and a `services.timeout` event is inserted into the events feed.
-
-</para>
-    </section>
-    <?dbhtml stop-chunking?>
 <section xml:id="concepts-service">
         <title>Service</title>
         <para>A service represents an instance of a long running process on your server.
-Each service belongs to a single session which must be periodically
-heartbeated to indicate that the session and its services are still alive.
+The client is responsible for sending heartbeats to indicate that the service is
+still alive.
+
+</para>
+        <para>If a service is not heartbeated in the defined timeout interval, the
+service is considered dead. When this happens, Service object is deleted
+and a `service.timeout` event is inserted into the events feed.
 
 </para>
         <para>Some example services include:
@@ -37,31 +28,12 @@ heartbeated to indicate that the session and its services are still alive.
                 <para>MySQL instance</para>
             </listitem>
             <listitem>
-                <para>Java application instance</para>
-            </listitem>
-            <listitem>
                 <para>ZNC instance</para>
             </listitem>
-        </itemizedlist>
-        <para>Usually a single session will have a single service associated with it, but
-in some cases you may want to have multiple services associated with a
-single session. An example of this would be a Java application with 2
-threads:
-
-</para>
-        <itemizedlist>
             <listitem>
-                <para>thread 1 - exposes a HTTP interface and listens on port 8000</para>
-            </listitem>
-            <listitem>
-                <para>thread 2 - exposes a Thrift interface and listens in port 9000</para>
+                <para>Long running Python / Ruby / Java application instance</para>
             </listitem>
         </itemizedlist>
-        <para>In this scenario, when a whole process dies, both of the threads go away,
-which means that you can model it by having a single session with two
-services associated with it (one per thread).
-
-</para>
     </section>
     <?dbhtml stop-chunking?>
 <section xml:id="concepts-configuration">
@@ -73,7 +45,7 @@ deleted.
 </para>
         <para>Each configuration key can contain a namespace. Namespace allows you to organize
 different (related) configuration values together in a hierarchical manner.
-They also make retrieving a subset of configuration values easier and more 
+They also make retrieving a subset of configuration values easier and more
 efficient.
 
 </para>
@@ -141,7 +113,7 @@ incidents occur:
 </para>
         <itemizedlist>
             <listitem>
-                <para>A service joins a session</para>
+                <para>A service is created</para>
             </listitem>
             <listitem>
                 <para>A configuration value is updated</para>
@@ -150,7 +122,7 @@ incidents occur:
                 <para>A configuration value is removed</para>
             </listitem>
             <listitem>
-                <para>A session times out</para>
+                <para>A service times out</para>
             </listitem>
         </itemizedlist>
         <para><figure><title>Events feed visualized using a timeline</title><mediaobject><imageobject><imagedata fileref="/img/events_feed_timeline_visualization.png" align="center"/></imageobject></mediaobject></figure>
@@ -192,8 +164,7 @@ has the following attributes:
         <title>Id</title>
         <para>All objects in the system are identified by a unique id. You'll use an
 object's id when you want to perform certain operations on it. For example,
-when you want to create a service and associate it with a session, you'll
-need to know the session id.
+when you want to heartbeat a service you'll need to know the service id.
 </para>
     </section>
 </chapter>

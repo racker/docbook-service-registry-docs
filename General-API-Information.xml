@@ -126,7 +126,7 @@ URI scheme, the first element of the path contains the target version
 identifier (e.g. https://dfw.registry.api.rackspacecloud.com/v1.0/…).
 
 </para>
-        <programlisting language="shell">GET /v1.0/1234/sessions HTTP/1.1
+        <programlisting language="shell">GET /v1.0/1234/services HTTP/1.1
 Host: dfw.registry.api.rackspacecloud.com
 Accept: application/json
 X-Auth-Token: eaaafd18-0fed-4b3a-81b4-663c99ec1cbb</programlisting>
@@ -170,9 +170,10 @@ input the limit parameter.
     "values": [
         {
             "id": "dfw1-api",
-            "session_id": "seOne",
             "tags": [],
-            "metadata": {}
+            "metadata": {},
+            "heartbeat_timeout": 3,
+            "last_seen": null
         }
     ],
     "metadata": {
@@ -180,7 +181,7 @@ input the limit parameter.
         "limit": 1,
         "marker": null,
         "next_marker": "dfw1-db1",
-        "next_href": "https://todo.api.rackspacecloud.com/v1.0/7777/services?limit=1&amp;marker=dfw1-db1"
+        "next_href": "https://dfw.registry.api.rackspacecloud.com/v1.0/7777/services?limit=1&amp;marker=dfw1-db1"
     }
 }</programlisting>
         </example>
@@ -190,7 +191,6 @@ input the limit parameter.
     "values": [
         {
             "id": "dfw1-db1",
-            "session_id": "seOne",
             "tags": [
                 "database",
                 "mysql"
@@ -200,7 +200,9 @@ input the limit parameter.
                 "port": "3306",
                 "ip": "127.0.0.1",
                 "version": "5.5.24-0ubuntu0.12.04.1 (Ubuntu)"
-            }
+            },
+            "heartbeat_timeout": 3,
+            "last_seen": null
         }
     ],
     "metadata": {
@@ -235,10 +237,6 @@ the API server will return 400 "Limit has been reached".
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Session</td>
-                    <td>100</td>
-                </tr>
                 <tr>
                     <td>Service</td>
                     <td>200</td>
@@ -294,7 +292,7 @@ the type of error and additional information in the fault response body.
     "type": "notFoundError",
     "code": 404,
     "message": "object does not exist",
-    "details": "Object \"Session\" with key \"seNotFound\" does not exist",
+    "details": "Object \"Service\" with key \"srvNotFound\" does not exist",
     "txnId": ".rh-qyek.h-farscape.r-q3i5psGp.c-3.ts-1347320188220.v-0.1"
 }</programlisting>
         </example>
