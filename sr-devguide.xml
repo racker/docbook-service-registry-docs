@@ -39,7 +39,7 @@
     </para>
   </abstract>
   <!-- Please generate the following when you create sr-devguide.xml:-->
-  <raxm:metadata xmlns:raxm="http://docs.rackspace.com/api/metadata">
+  <raxm:metadata role="hidden" xmlns:raxm="http://docs.rackspace.com/api/metadata">
     <raxm:displayname>API Developer Guide</raxm:displayname>
     <raxm:product version="v1.0">rsr</raxm:product>
     <raxm:priority>20</raxm:priority>
